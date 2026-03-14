@@ -1,0 +1,31 @@
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+text-align:center;
+background:#1e293b;
+padding:40px;
+border-radius:12px;
+}
+
+#drop-area{
+border:2px dashed #38bdf8;
+padding:30px;
+margin-bottom:20px;
+}
+
+button{
+background:#2563eb;
+color:white;
+padding:12px 20px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}

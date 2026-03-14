@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Age Detector</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#6366f1,#22d3ee,#9333ea);
+background-size:300% 300%;
+animation:bgmove 10s infinite alternate;
+padding:20px;
+}
+
+@keyframes bgmove{
+0%{background-position:left}
+100%{background-position:right}
+}
+
+.container{
+background:white;
+padding:35px;
+border-radius:15px;
+width:100%;
+max-width:420px;
+text-align:center;
+box-shadow:0 15px 35px rgba(0,0,0,0.25);
+}
+
+h1{
+margin-bottom:8px;
+}
+
+.subtitle{
+color:#555;
+margin-bottom:20px;
+font-size:14px;
+}
+
+.upload-box{
+border:2px dashed #6366f1;
+padding:30px;
+border-radius:10px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.upload-box:hover{
+background:#f3f4ff;
+}
+
+.upload-box input{
+display:none;
+}
+
+button{
+margin-top:15px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#6366f1;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+background:#4f46e5;
+transform:scale(1.03);
+}
+
+#result{
+margin-top:20px;
+}
+
+#result img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.age{
+font-size:22px;
+color:#4f46e5;
+font-weight:bold;
+}
+
+.download{
+background:#10b981;
+}
+
+.download:hover{
+background:#059669;
+}
+
+.error{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>AI Age Detector</h1>
+<p class="subtitle">Upload a face image and detect age</p>
+
+<label class="upload-box">
+Upload Image
+<input type="file" id="file">
+</label>
+
+<br>
+
+<label>
+<input type="checkbox" id="remove_bg">
+Remove Background
+</label>
+
+<button onclick="predictAge()">Detect Age</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let imagePath=""
+
+function predictAge(){
+
+let file=document.getElementById("file").files[0]
+
+if(!file){
+alert("Please upload an image")
+return
+}
+
+let remove_bg=document.getElementById("remove_bg").checked
+
+let formData=new FormData()
+
+formData.append("image",file)
+formData.append("remove_bg",remove_bg)
+
+document.getElementById("result").innerHTML="Processing..."
+
+fetch("/predict",{
+method:"POST",
+body:formData
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.error){
+
+document.getElementById("result").innerHTML=
+`<p class="error">${data.error}</p>`
+
+return
+}
+
+imagePath=data.image
+
+document.getElementById("result").innerHTML=
+`
+<img src="${data.image}">
+<p class="age">Predicted Age: ${data.age}</p>
+<button class="download" onclick="downloadImage()">Download Image</button>
+`
+
+})
+
+}
+
+function downloadImage(){
+
+window.location.href="/download?file="+imagePath
+
+}
+
+</script>
+
+</body>
+</html>
